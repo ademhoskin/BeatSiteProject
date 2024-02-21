@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
 import java.util.List;
 import com.bdv.demo.beats.Beat;
 
@@ -20,14 +22,15 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
+    public ResponseEntity<List<BeatOrder>> getAllOrders() {
+        List<BeatOrder> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
+
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
-        Order order = orderService.getOrderById(orderId);
+    public ResponseEntity<BeatOrder> getOrderById(@PathVariable Long orderId) {
+        BeatOrder order = orderService.getOrderById(orderId);
         if (order != null) {
             return new ResponseEntity<>(order, HttpStatus.OK);
         } else {
@@ -36,8 +39,14 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
+    public ResponseEntity<BeatOrder> createOrder(@RequestBody BeatOrder order) {
+        BeatOrder createdOrder = orderService.createOrder(order);
+        for (Beat beat : order.getBeats()) {
+            if (beat.getBeatId() == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+        }
         if (createdOrder != null) {
             return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
         } else {
@@ -46,8 +55,8 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long orderId, @RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(orderId, order);
+    public ResponseEntity<BeatOrder> updateOrder(@PathVariable Long orderId, @RequestBody BeatOrder order) {
+        BeatOrder updatedOrder = orderService.updateOrder(orderId, order);
         if (updatedOrder != null) {
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
         } else {

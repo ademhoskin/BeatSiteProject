@@ -16,18 +16,18 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public List<Order> getAllOrders() {
+    public List<BeatOrder> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public Order getOrderById(Long orderId) {
+    public BeatOrder getOrderById(Long orderId) {
         if (orderId == null) {
             throw new IllegalArgumentException("Order id cannot be null");
         }
         return orderRepository.findById(orderId).orElse(null);
     }
 
-    public Order createOrder(Order order) {
+    public BeatOrder createOrder(BeatOrder order) {
         if (order == null) {
             throw new IllegalArgumentException("Order object cannot be null");
         }
@@ -35,7 +35,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order updateOrder(Long orderId, Order order) {
+    public BeatOrder updateOrder(Long orderId, BeatOrder order) {
         if (order == null) {
             throw new IllegalArgumentException("Order object cannot be null");
         }

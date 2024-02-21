@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
 import com.bdv.demo.beats.Beat;
 
 @Entity
-public class Order {
+public class BeatOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Order {
     private List<Beat> beats;
 
 
-    public Order() {
+    public BeatOrder() {
     }
 
     public Long getOrderId() {
