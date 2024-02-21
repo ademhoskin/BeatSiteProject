@@ -20,20 +20,24 @@ public class Beat {
     @Column(nullable = false)
     private String key;
 
-    @Column(nullable = false)
-    private Double price;
-
     @ElementCollection
     @CollectionTable(name = "beat_tags", joinColumns = @JoinColumn(name = "beat_id"))
     @Column(name = "tag")
     private List<String> tags;
 
+    public enum LicenseType {
+        STANDARD, PREMIUM, TRACKOUT
+    }
+
+    @Column(nullable = false)
+    private LicenseType licenseType;
 
     @Column(nullable = false)
     private String youTubeLink;
 
     @Column(nullable = false)
     private String s3ObjectLink;
+
 
     public Beat() {
     }
@@ -79,14 +83,6 @@ public class Beat {
         this.key = key;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public List<String> getTags() {
         return tags;
     }
@@ -111,4 +107,11 @@ public class Beat {
         this.s3ObjectLink = s3ObjectLink;
     }
 
+    public LicenseType getLicenseType() {
+        return licenseType;
+    }
+
+    public void setLicenseType(LicenseType licenseType) {
+        this.licenseType = licenseType;
+    }
 }

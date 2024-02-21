@@ -2,8 +2,8 @@ package com.bdv.demo.orders;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.List;
+
 import com.bdv.demo.beats.Beat;
 
 @Service
@@ -16,46 +16,57 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public BeatOrder createOrder(BeatOrder order) {
-
-        order.setOrderDateTime(LocalDateTime.now());
-        order.setOrderStatus(BeatOrder.OrderStatus.PENDING);
-
-        return orderRepository.save(order);
-    }
-
-    public List<BeatOrder> getAllOrders() {
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public BeatOrder getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("BeatOrder not found with ID: " + orderId));
+    public Order getOrderById(Long orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order id cannot be null");
+        }
+        return orderRepository.findById(orderId).orElse(null);
     }
 
-    public List<BeatOrder> getOrdersByCustomerEmail(String customerEmail) {
-        return orderRepository.findByCustomerEmail(customerEmail);
-    }
-
-    public BeatOrder updateOrderStatus(Long orderId, BeatOrder.OrderStatus newStatus) {
-        BeatOrder order = getOrderById(orderId);
-        order.setOrderStatus(newStatus);
+    public Order createOrder(Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order object cannot be null");
+        }
+        // Business logic to create a order
         return orderRepository.save(order);
     }
 
-    public void deleteOrder(Long orderId) {
+    public Order updateOrder(Long orderId, Order order) {
+        if (order == null) {
+            throw new IllegalArgumentException("Order object cannot be null");
+        }
+        // Business logic to update a order
+        return orderRepository.save(order);
+    }
+
+    public boolean deleteOrder(Long orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order id cannot be null");
+        }
+        // Business logic to delete a order
         orderRepository.deleteById(orderId);
+        return true;
     }
 
-    public Double calculateOrderTotal(Long orderId) {
-        BeatOrder order = getOrderById(orderId);
-        return order.getBeats().stream().mapToDouble(Beat::getPrice).sum();
-    }
-
-
-    public List<Beat> getBeatsInOrder(Long orderId) {
-        BeatOrder order = getOrderById(orderId);
-        return order.getBeats();
+    public Double calcTotalCost(List<Beat> beats) {
+        Double totalCost = 0.0;
+        for (Beat beat : beats) {
+            switch(beat.getLicenseType()) {
+                case STANDARD:
+                    totalCost += 14.99;
+                    break;
+                case PREMIUM:
+                    totalCost += 39.99;
+                    break;
+                case TRACKOUT:
+                    totalCost += 199.99;
+                    break;
+            }
+        }
+        return totalCost;
     }
 }
-

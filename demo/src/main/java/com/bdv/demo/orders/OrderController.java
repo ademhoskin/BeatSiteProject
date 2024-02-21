@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.bdv.demo.beats.Beat;
 
 import java.util.List;
+import com.bdv.demo.beats.Beat;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -19,17 +19,15 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    // Get all orders
     @GetMapping
-    public ResponseEntity<List<BeatOrder>> getAllOrders() {
-        List<BeatOrder> orders = orderService.getAllOrders();
+    public ResponseEntity<List<Order>> getAllOrders() {
+        List<Order> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    // Get order by ID
     @GetMapping("/{orderId}")
-    public ResponseEntity<BeatOrder> getOrderById(@PathVariable Long orderId) {
-        BeatOrder order = orderService.getOrderById(orderId);
+    public ResponseEntity<Order> getOrderById(@PathVariable Long orderId) {
+        Order order = orderService.getOrderById(orderId);
         if (order != null) {
             return new ResponseEntity<>(order, HttpStatus.OK);
         } else {
@@ -37,38 +35,39 @@ public class OrderController {
         }
     }
 
-    // Create a new order
     @PostMapping
-    public ResponseEntity<BeatOrder> createOrder(@RequestBody BeatOrder order) {
-        BeatOrder createdOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        Order createdOrder = orderService.createOrder(order);
+        if (createdOrder != null) {
+            return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
     }
 
-    // Update an existing order status by ID
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<BeatOrder> updateOrderStatus(@PathVariable Long orderId, @RequestBody BeatOrder.OrderStatus newStatus) {
-        BeatOrder updatedOrder = orderService.updateOrderStatus(orderId, newStatus);
-        return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+    @PutMapping("/{orderId}")
+    public ResponseEntity<Order> updateOrder(@PathVariable Long orderId, @RequestBody Order order) {
+        Order updatedOrder = orderService.updateOrder(orderId, order);
+        if (updatedOrder != null) {
+            return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Delete an order by ID
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<HttpStatus> deleteOrder(@PathVariable Long orderId) {
+        boolean deleted = orderService.deleteOrder(orderId);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Get orders by customer email
-    @GetMapping("/customer/{customerEmail}")
-    public ResponseEntity<List<BeatOrder>> getOrdersByCustomerEmail(@PathVariable String customerEmail) {
-        List<BeatOrder> orders = orderService.getOrdersByCustomerEmail(customerEmail);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
-
-    // Get all beats in an order by order ID
-    @GetMapping("/{orderId}/beats")
-    public ResponseEntity<List<Beat>> getBeatsInOrder(@PathVariable Long orderId) {
-        List<Beat> beats = orderService.getBeatsInOrder(orderId);
-        return new ResponseEntity<>(beats, HttpStatus.OK);
+    @PostMapping("/calculateTotalCost")
+    public ResponseEntity<Double> calculateTotalCost(@RequestBody List<Beat> beats) {
+        Double totalCost = orderService.calcTotalCost(beats);
+        return new ResponseEntity<>(totalCost, HttpStatus.OK);
     }
 }

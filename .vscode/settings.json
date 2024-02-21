@@ -1,5 +1,7 @@
 {
-    "editor.fontFamily": "Hack",
+    "editor.fontFamily": "JetBrainsMono Nerd Font Mono",
     "editor.fontLigatures": "'calt', 'liga', 'dlig','ss1', 'ss2', 'ss3', 'ss4', 'ss6'",
-    "editor.fontWeight": "535" 
+    "editor.fontWeight": "235",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "terminal.integrated.fontFamily": "JetbrainsMono Nerd Font Mono"
 }

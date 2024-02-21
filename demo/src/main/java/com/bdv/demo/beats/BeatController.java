@@ -34,22 +34,26 @@ public class BeatController {
         }
     }
 
-    // Create a new beat
     @PostMapping
     public ResponseEntity<Beat> createBeat(@RequestBody Beat beat) {
         Beat createdBeat = beatService.createBeat(beat);
-        if (createdBeat == null) {
+        if (createdBeat != null) {
+            return new ResponseEntity<>(createdBeat, HttpStatus.CREATED);
+        } else {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(createdBeat, HttpStatus.CREATED);
     }
 
-    @GetMapping("/findByTags")
-    public List<Beat> findByTags(@RequestParam(name = "tag") String tag) {
-        return beatService.findByTagsContaining(tag);
+    @PutMapping("/{beatId}")
+    public ResponseEntity<Beat> updateBeat(@PathVariable Long beatId, @RequestBody Beat beat) {
+        Beat updatedBeat = beatService.updateBeat(beatId, beat);
+        if (updatedBeat != null) {
+            return new ResponseEntity<>(updatedBeat, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    // Delete a beat by ID
     @DeleteMapping("/{beatId}")
     public ResponseEntity<HttpStatus> deleteBeat(@PathVariable Long beatId) {
         boolean deleted = beatService.deleteBeat(beatId);
@@ -60,14 +64,9 @@ public class BeatController {
         }
     }
 
-    // Update an existing beat details/s3link by ID
-    @PutMapping("/{beatId}")
-    public ResponseEntity<Beat> updateBeat(@PathVariable Long beatId, @RequestBody Beat beat) {
-        Beat updatedBeat = beatService.updateBeat(beatId, beat);
-        if (updatedBeat != null) {
-            return new ResponseEntity<>(updatedBeat, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/findByTags")
+    public ResponseEntity<List<Beat>> findByTags(@RequestParam(name = "tag") String tag) {
+        List<Beat> beats = beatService.findByTagsContaining(tag);
+        return new ResponseEntity<>(beats, HttpStatus.OK);
     }
 }
